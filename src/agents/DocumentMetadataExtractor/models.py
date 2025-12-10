@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 from enum import Enum
 
 
@@ -57,4 +57,50 @@ class DocumentMetadataResponse(BaseModel):
     )
     scope: Optional[str] = Field(
         None, description="The boundaries and applicability of this document"
+    )
+
+
+class DocumentMetadataFeedback(BaseModel):
+    score: int = Field(
+        ...,
+        description="The score assigned to the document metadata. The score is a number between 0 and 100.",
+        ge=0,
+        le=100,
+    )
+    fields_to_improve: List[
+        Literal[
+            "title",
+            "description",
+            "department",
+            "domain",
+            "document_number",
+            "document_type",
+            "document_category",
+            "author",
+            "version",
+            "effective_date",
+            "scope",
+        ]
+    ] = Field(
+        default=[],
+        description="The fields of the document metadata that need to be improved.",
+    )
+    feedback_tags: List[
+        Literal[
+            "Factually incorrect",
+            "Not supported by source Off-topic or wrong focus",
+            "Missing important information",
+            "Too brief or overly summarized",
+            "Too long or needs concise version",
+            "Unclear wording",
+            "Hard to follow structure",
+            "Regulatory or compliance concern",
+            "Other",
+        ]
+    ] = Field(
+        default=["Other"],
+        description="The tags assigned to the document metadata. The tags are the options for HITL review.",
+    )
+    text: Optional[str] = Field(
+        None, description="The free text comment for the feedback."
     )
