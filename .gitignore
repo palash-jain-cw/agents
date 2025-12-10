@@ -1,0 +1,4 @@
+*.env
+*.pyc
+uv.lock
+*.ipynb
