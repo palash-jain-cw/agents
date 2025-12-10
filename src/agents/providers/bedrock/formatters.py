@@ -17,7 +17,7 @@ def format_cache_block(
             {
                 "type": "text",
                 "text": cached_block,
-                # "cache_control": {"type": cache_control},
+                "cache_control": {"type": cache_control},
             }
             for cached_block in cached_content
         ]
@@ -49,7 +49,7 @@ def format_structured_schema(schema: Optional[Type[BaseModel]] = None) -> dict:
             {
                 "type": "text",
                 "text": schema_block,
-                # "cache_control": {"type": "ephemeral"},
+                "cache_control": {"type": "ephemeral"},
             }
         ]
 
@@ -64,6 +64,6 @@ def format_content_blocks(
     )
     return (
         format_cache_block(cached_content)
-        + format_variable_block(variable_content)
         + format_structured_schema(schema)
+        + format_variable_block(variable_content)
     )
