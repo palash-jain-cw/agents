@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 from typing import Type, List, Optional, Union, Tuple
-from agents.core.models import StringRequest, StringResponse
+from agents.core.models import StringRequest, StringResponse, StringFeedback, Draft
 from agents.providers.bedrock.AnthropicClient import BedrockAnthropicClient
 import json
 
 
-class Agent:
+class SingleTurnAgent:
     def __init__(
         self,
         name: str,
@@ -13,6 +13,7 @@ class Agent:
         request_model: Optional[Type[BaseModel]] = StringRequest,
         instructions: Optional[str] = "You are a helpful assistant.",
         response_model: Optional[Type[BaseModel]] = StringResponse,
+        feedback_model: Optional[Type[BaseModel]] = StringFeedback,
         provider: Optional[str] = "bedrock_anthropic",
         model_id: Optional[str] = "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
     ):
@@ -21,6 +22,7 @@ class Agent:
         self.request_model = request_model
         self.instructions = instructions
         self.response_model = response_model
+        self.feedback_model = feedback_model
         self.provider = provider
         self.model_id = model_id
         self.client = self.resolve_provider()
@@ -34,16 +36,19 @@ class Agent:
         else:
             raise ValueError(f"Provider {self.provider} not supported")
 
-    def format_request(self, request: BaseModel) -> Tuple[List[str], List[str]]:
+    def format_request(
+        self, request: BaseModel, previous_draft: Optional[BaseModel] = None
+    ) -> Tuple[List[str], List[str]]:
         cached_content = [self.instructions]
         variable_content = [json.dumps(request.model_dump(), indent=2)]
         return cached_content, variable_content
 
-    def run(self, request: BaseModel) -> Tuple[BaseModel, dict]:
+    def run(self, request: BaseModel) -> Draft:
         cached_content, variable_content = self.format_request(request)
         response, usage = self.client.query(
             cached_content=cached_content,
             variable_content=variable_content,
             schema=self.response_model,
         )
-        return response, usage
+        draft = Draft(draft=response, feedback=None, usage=usage)
+        return draft

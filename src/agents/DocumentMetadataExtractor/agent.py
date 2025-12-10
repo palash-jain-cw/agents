@@ -1,4 +1,4 @@
-from agents.core.base import Agent
+from agents.core.base import SingleTurnAgent
 from agents.DocumentMetadataExtractor.models import (
     DocumentMetadataRequest,
     DocumentMetadataResponse,
@@ -10,7 +10,7 @@ from typing import Type
 from pydantic import BaseModel
 
 
-class DocumentMetadataExtractor(Agent):
+class DocumentMetadataExtractor(SingleTurnAgent):
     def __init__(
         self,
         name: str = "DocumentMetadataExtractor",
