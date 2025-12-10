@@ -1,0 +1,15 @@
+[project]
+name = "agents"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [{ name = "Palash Jain", email = "palash.jain.cw@gmail.com" }]
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.12.5", "python-dotenv>=1.2.1"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["ipykernel>=7.1.0", "ruff>=0.14.8"]
